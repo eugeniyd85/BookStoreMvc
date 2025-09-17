@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BookStoreMvc.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookStoreMvc.Data
 {
@@ -7,5 +8,7 @@ namespace BookStoreMvc.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
+
+        public DbSet<Category> Categories { get; set; }
     }
 }
