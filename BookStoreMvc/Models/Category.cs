@@ -7,7 +7,7 @@ namespace BookStoreMvc.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required(ErrorMessage ="Hey, field Name is required!")]
+        [Required]
         [MaxLength(30)]
         [DisplayName("Category Name")]
         public string Name { get; set; }
