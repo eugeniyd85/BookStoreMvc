@@ -17,13 +17,13 @@ namespace BookStoreMvc.Controllers
             return View(objCategoryList);
         }
 
-        public IActionResult CreateNewCategory()
+        public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult CreateNewCategory(Category obj)
+        public IActionResult Create(Category obj)
         {
             //if (obj.Name == obj.DisplayOrder.ToString())
             //{
@@ -32,6 +32,38 @@ namespace BookStoreMvc.Controllers
             if (ModelState.IsValid)
             {
                 _db.Categories.Add(obj);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View();
+        }
+
+        public IActionResult Edit(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            Category? categoryToEdit = _db.Categories.Find(id); // can search only other field Id
+            // Category? categoryToEdit1 = _db.Categories.FirstOrDefault(u=>u.Id==id); // can search by other fields than Id and by their partial entries
+            // Category? categoryToEdit2 = _db.Categories.Where(u=>u.Id==id).FirstOrDefault(); // can be done more filtering or calculations before getting FirstOrDefault
+            if (categoryToEdit == null)
+            {
+                return NotFound();
+            }
+            return View(categoryToEdit);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Category obj)
+        {
+            //if (obj.Name == obj.DisplayOrder.ToString())
+            //{
+            //    ModelState.AddModelError("name", "The Display Order cannot exactly match the Name.");
+            //}
+            if (ModelState.IsValid)
+            {
+                _db.Categories.Update(obj);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
