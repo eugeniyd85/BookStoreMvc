@@ -1,6 +1,7 @@
 ﻿@model Category
 
 <form method="post">
+    @*<input asp-for="Id" hidden />*@ @*This line need to be added in case if in controller for Edit action Id doesn't populated. Reason can be because of name of id different from 'Id'*@
     <div class="border p-3 mt-4" style="--bs-border-width: 1px;">
         <div class="row pb-2">
             <h2 class="text-primary">Edit Category</h2>

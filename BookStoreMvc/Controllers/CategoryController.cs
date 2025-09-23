@@ -25,10 +25,6 @@ namespace BookStoreMvc.Controllers
         [HttpPost]
         public IActionResult Create(Category obj)
         {
-            //if (obj.Name == obj.DisplayOrder.ToString())
-            //{
-            //    ModelState.AddModelError("name", "The Display Order cannot exactly match the Name.");
-            //}
             if (ModelState.IsValid)
             {
                 _db.Categories.Add(obj);
@@ -57,10 +53,6 @@ namespace BookStoreMvc.Controllers
         [HttpPost]
         public IActionResult Edit(Category obj)
         {
-            //if (obj.Name == obj.DisplayOrder.ToString())
-            //{
-            //    ModelState.AddModelError("name", "The Display Order cannot exactly match the Name.");
-            //}
             if (ModelState.IsValid)
             {
                 _db.Categories.Update(obj);
