@@ -1,4 +1,4 @@
-﻿using BookStoreMvc.Data;
+﻿using BookStoreMvc.DataAccess.Data;
 using BookStoreMvc.Models;
 using Microsoft.AspNetCore.Mvc;
 
