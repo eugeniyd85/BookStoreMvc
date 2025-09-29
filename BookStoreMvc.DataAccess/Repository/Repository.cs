@@ -15,6 +15,7 @@ namespace BookStoreMvc.DataAccess.Repository
         private readonly ApplicationDbContext _db;
         internal DbSet<T> dbSet;
 
+        //spend more time to understand this
         public Repository(ApplicationDbContext db)
         {
             _db = db;

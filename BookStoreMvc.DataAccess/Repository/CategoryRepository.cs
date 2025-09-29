@@ -13,7 +13,8 @@ namespace BookStoreMvc.DataAccess.Repository
     public class CategoryRepository : Repository<Category>, ICategoryRepository
     {
         private ApplicationDbContext _db;
-        public CategoryRepository(ApplicationDbContext db) : base(db)
+        //spend more time to understand this
+        public CategoryRepository(ApplicationDbContext db) : base(db) // clarify meaning of base(db) here
         {
             _db = db;
         }
