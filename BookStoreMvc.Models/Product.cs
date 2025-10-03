@@ -13,32 +13,45 @@ namespace BookStoreMvc.Models
     {
         [Key]
         public int Id { get; set; }
+        
         [Required]
         [MaxLength(50)]
         public string Title { get; set; }
+        
         [MaxLength(250)]
         public string Description { get; set; }
+        
         [Required]
         [MaxLength(20)]
         public string ISBN { get; set; }
+        
         [Required]
         [MaxLength(50)]
         public string Author { get; set; }
+        
         [Required]
         [DisplayName("List Price")]
         [Range(1, 1000)]
         public double ListPrice { get; set; }
+        
         [Required]
         [DisplayName("Price for 1-49")]
         [Range(1, 1000)]
         public double Price { get; set; }
+        
         [Required]
         [DisplayName("Price for 50-99")]
         [Range(1, 1000)]
         public double Price50 { get; set; }
+        
         [Required]
         [DisplayName("Price for 100+")]
         [Range(1, 1000)]
         public double Price100 { get; set; }
+        
+        public int CategoryId { get; set; }
+        [ForeignKey("CategoryId")]
+        public Category Category { get; set; }
+
     }
 }
