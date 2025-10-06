@@ -2,6 +2,7 @@
 using BookStoreMvc.DataAccess.Repository.IRepository;
 using BookStoreMvc.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BookStoreMvc.Areas.Admin.Controllers
 {
@@ -21,6 +22,15 @@ namespace BookStoreMvc.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
+            IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category
+                .GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                });
+
+            ViewBag.CategoryList = CategoryList;
+
             return View();
         }
 
@@ -28,7 +38,7 @@ namespace BookStoreMvc.Areas.Admin.Controllers
         public IActionResult Create(Product obj)
         {
             //obj.Price = obj.Price.ToString();
-            
+
             if (ModelState.IsValid)
             {
                 _unitOfWork.Product.Add(obj);
@@ -45,7 +55,7 @@ namespace BookStoreMvc.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            Product? productToEdit = _unitOfWork.Product.Get(u=>u.Id==id); // can search only other field Id
+            Product? productToEdit = _unitOfWork.Product.Get(u => u.Id == id); // can search only other field Id
             // Product? productToEdit1 = _db.Products.FirstOrDefault(u=>u.Id==id); // can search by other fields than Id and by their partial entries
             // Product? productToEdit2 = _db.Products.Where(u=>u.Id==id).FirstOrDefault(); // can be done more filtering or calculations before getting FirstOrDefault
             if (productToEdit == null)
