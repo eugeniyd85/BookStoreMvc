@@ -21,7 +21,8 @@ namespace BookStoreMvc.Areas.Admin.Controllers
             return View(objProductList);
         }
 
-        public IActionResult Create()
+        // Upsert = UpdateInsert. Combines Update and Insert in one functionality
+        public IActionResult Upsert(int? id)
         {
             ProductVM productVM = new()
             {
@@ -33,11 +34,22 @@ namespace BookStoreMvc.Areas.Admin.Controllers
                 Product = new Product()
             };
 
-            return View(productVM);
+            if (id == null || id == 0)
+            {
+                //create
+                return View(productVM);
+            }
+            else 
+            {
+                //update
+                productVM.Product = _unitOfWork.Product.Get(u => u.Id == id);
+                return View(productVM);
+            }
+
         }
 
         [HttpPost]
-        public IActionResult Create(ProductVM productVM)
+        public IActionResult Upsert(ProductVM productVM, IFormFile? file)
         {
             if (ModelState.IsValid)
             {
@@ -56,35 +68,6 @@ namespace BookStoreMvc.Areas.Admin.Controllers
                 });
                 return View(productVM);
             }
-        }
-
-        public IActionResult Edit(int? id)
-        {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-            Product? productToEdit = _unitOfWork.Product.Get(u => u.Id == id); // can search only other field Id
-            // Product? productToEdit1 = _db.Products.FirstOrDefault(u=>u.Id==id); // can search by other fields than Id and by their partial entries
-            // Product? productToEdit2 = _db.Products.Where(u=>u.Id==id).FirstOrDefault(); // can be done more filtering or calculations before getting FirstOrDefault
-            if (productToEdit == null)
-            {
-                return NotFound();
-            }
-            return View(productToEdit);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(Product obj)
-        {
-            if (ModelState.IsValid)
-            {
-                _unitOfWork.Product.Update(obj);
-                _unitOfWork.Save();
-                TempData["success"] = "Product updated successfully";
-                return RedirectToAction("Index");
-            }
-            return View();
         }
 
         public IActionResult Delete(int? id)
