@@ -133,7 +133,7 @@ namespace BookStoreMvc.Areas.Admin.Controllers
             _unitOfWork.Product.Remove(productToBeDeleted);
             _unitOfWork.Save();
 
-            return Json(new { success = true, message = "Deletion Successful" });
+            return Json(new { success = true, message = "Product deleted successfully" });
         }
 
         #endregion
