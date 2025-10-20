@@ -83,13 +83,13 @@ namespace BookStoreMvc.Areas.Admin.Controllers
         [HttpDelete]
         public IActionResult Delete(int? id)
         {
-            var productToBeDeleted = _unitOfWork.Company.Get(u => u.Id == id);
-            if (productToBeDeleted == null)
+            var companyToBeDeleted = _unitOfWork.Company.Get(u => u.Id == id);
+            if (companyToBeDeleted == null)
             {
                 return Json(new { success = false, message = "Error while deleting" });
             }
 
-            _unitOfWork.Company.Remove(productToBeDeleted);
+            _unitOfWork.Company.Remove(companyToBeDeleted);
             _unitOfWork.Save();
 
             return Json(new { success = true, message = "Company deleted successfully" });

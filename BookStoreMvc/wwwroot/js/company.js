@@ -8,7 +8,11 @@ function loadDataTable() {
     dataTable = $('#tblData').DataTable({
         "ajax": { url: '/admin/company/getall' },
         "columns": [
-            { data: 'name', "width": "25%" },
+            { data: 'name', "width": "15%" },
+            { data: 'streetAddress', "width": "15%" },
+            { data: 'city', "width": "15%" },
+            { data: 'state', "width": "15%" },
+            { data: 'phoneNumber', "width": "15%" },
             {
                 data: 'id',
                 "render": function (data) {
