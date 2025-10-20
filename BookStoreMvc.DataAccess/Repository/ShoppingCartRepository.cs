@@ -1,0 +1,27 @@
+﻿using BookStoreMvc.DataAccess.Data;
+using BookStoreMvc.DataAccess.Repository.IRepository;
+using BookStoreMvc.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BookStoreMvc.DataAccess.Repository
+{
+    public class ShoppingCartRepository : Repository<ShoppingCart>, IShoppingCartRepository
+    {
+        private ApplicationDbContext _db;
+        //spend more time to understand this
+        public ShoppingCartRepository(ApplicationDbContext db) : base(db) // clarify meaning of base(db) here
+        {
+            _db = db;
+        }
+
+        public void Update(ShoppingCart obj)
+        {
+            _db.ShoppingCarts.Update(obj);
+        }
+    }
+}
