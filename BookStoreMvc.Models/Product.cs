@@ -50,6 +50,7 @@ namespace BookStoreMvc.Models
         public double Price100 { get; set; }
         
         public int CategoryId { get; set; }
+        //CategoryId is the navigation property for this Category
         [ForeignKey("CategoryId")]
         [ValidateNever]
         public Category Category { get; set; }
