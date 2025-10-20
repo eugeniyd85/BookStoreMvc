@@ -20,7 +20,18 @@ namespace BookStoreMvc.DataAccess.Repository
 
         public void Update(Company obj)
         {
-            throw new NotImplementedException();
+            _db.Companies.Update(obj);
+
+            //var objFromDb = _db.Companies.FirstOrDefault(u => u.Id == obj.Id);
+            //if (objFromDb != null)
+            //{
+            //    objFromDb.Name = obj.Name;
+            //    objFromDb.StreetAddress = obj.StreetAddress;
+            //    objFromDb.City = obj.City;
+            //    objFromDb.State = obj.State;
+            //    objFromDb.PostalCode = obj.PostalCode;
+            //    objFromDb.PhoneNumber = obj.PhoneNumber;
+            //}
         }
     }
 }
