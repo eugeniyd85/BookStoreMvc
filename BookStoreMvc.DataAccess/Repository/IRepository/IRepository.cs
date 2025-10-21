@@ -10,7 +10,7 @@ namespace BookStoreMvc.DataAccess.Repository.IRepository
     public interface IRepository<T> where T : class
     {
         //T - Category
-        IEnumerable<T> GetAll(string? includeProperties = null);
+        IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null);
         // 'bool tracked = false' - is for not to save some interim changes with object or its properties (after .Save())
         T Get(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false);
         void Add(T entity);
