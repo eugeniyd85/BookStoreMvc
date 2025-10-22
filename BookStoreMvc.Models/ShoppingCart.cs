@@ -22,5 +22,8 @@ namespace BookStoreMvc.Models
         [ForeignKey("ApplicationUserId")]
         [ValidateNever]
         public ApplicationUser ApplicationUser { get; set; }
+
+        [NotMapped] // This property will not be mapped (create record) to the database
+        public double Price { get; set; }
     }
 }
