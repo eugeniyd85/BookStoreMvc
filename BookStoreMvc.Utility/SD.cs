@@ -26,3 +26,8 @@ namespace BookStoreMvc.Utility
         public const string PaymentStatusRejected = "Rejected";
     }
 }
+
+
+// issues:
+// 1. Can pay for empty cart
+// 2. 
