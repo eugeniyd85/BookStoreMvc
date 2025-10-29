@@ -1,5 +1,6 @@
 ﻿using BookStoreMvc.DataAccess.Repository.IRepository;
 using BookStoreMvc.Models;
+using BookStoreMvc.Models.ViewModels;
 using BookStoreMvc.Utility;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,16 @@ namespace BookStoreMvc.Areas.Admin.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult Details(int orderId)
+        {
+            OrderVM orderVM = new()
+            {
+                OrderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == orderId, includeProperties: "ApplicationUser"),
+                OrderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == orderId, includeProperties: "Product")
+            };
+            return View(orderVM);
         }
 
         #region API CALLS
