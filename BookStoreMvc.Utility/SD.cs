@@ -30,4 +30,4 @@ namespace BookStoreMvc.Utility
 
 // issues:
 // 1. Can pay for empty cart
-// 2. 
+// 2. Bug on update order details => remove some optional properties doesn't display it after page reload
