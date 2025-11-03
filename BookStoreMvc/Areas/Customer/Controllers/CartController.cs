@@ -197,7 +197,7 @@ namespace BookStoreMvc.Areas.Customer.Controllers
 
         public IActionResult Minus(int cartId)
         {
-            var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
+            var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId, tracked: true);
             if (cartFromDb != null)
             {
                 if (cartFromDb.Count <= 1)
@@ -218,7 +218,7 @@ namespace BookStoreMvc.Areas.Customer.Controllers
 
         public IActionResult Remove(int cartId)
         {
-            var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
+            var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId, tracked: true);
             if (cartFromDb != null)
             {
                 HttpContext.Session.SetInt32(SD.SessionCart,
