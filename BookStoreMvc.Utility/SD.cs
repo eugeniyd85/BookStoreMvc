@@ -33,4 +33,4 @@ namespace BookStoreMvc.Utility
 // issues:
 // 1. Can pay for empty cart
 // 2. Bug on update order details => remove some optional properties doesn't display it after page reload
-// 3. 
+// 3. If after login navigate not to Home page then cart items number is incorrect until go to Home page
