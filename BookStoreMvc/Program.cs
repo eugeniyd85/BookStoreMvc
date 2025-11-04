@@ -1,4 +1,5 @@
 using BookStoreMvc.DataAccess.Data;
+using BookStoreMvc.DataAccess.DbInitializer;
 using BookStoreMvc.DataAccess.Repository;
 using BookStoreMvc.DataAccess.Repository.IRepository;
 using BookStoreMvc.Utility;
@@ -40,6 +41,7 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddRazorPages();
 //builder.Services.AddScoped<ICategoryRepository, CategoryRepository>(); - if to add repositories separately when not using UnitOfWork
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -65,6 +67,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
+SeedDatabase();
 app.MapRazorPages();
 app.MapStaticAssets();
 
@@ -75,3 +78,12 @@ app.MapControllerRoute(
 
 
 app.Run();
+
+void SeedDatabase()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        dbInitializer.Initialize();
+    }
+}
