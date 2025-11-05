@@ -178,6 +178,10 @@ namespace BookStoreMvc.Areas.Customer.Controllers
                 HttpContext.Session.Clear();
             }
 
+            //send email to user, also add dependency injection for IEmailSender and uncomment
+            //_emailSender.SendEmailAsync(orderHeader.ApplicationUser.Email, "New Order - Bulky Book",
+            //   $"<p>New Order Created - {orderHeader.Id}</p>");
+
             List<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
             _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
             _unitOfWork.Save();
