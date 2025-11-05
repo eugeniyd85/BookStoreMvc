@@ -23,6 +23,6 @@ namespace BookStoreMvc.Models
         //CompanyId is the navigation property for this Company
         [ForeignKey("CompanyId")]
         [ValidateNever]
-        public Company Company { get; set; }
+        public Company? Company { get; set; }
     }
 }
