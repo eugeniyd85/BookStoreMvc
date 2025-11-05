@@ -8,6 +8,7 @@ function loadDataTable() {
     dataTable = $('#tblData').DataTable({
         "ajax": { url: '/admin/user/getall' },
         "columns": [
+            //find exact place where these names of the properties are taken from
             { data: 'name', "width": "15%" },
             { data: 'email', "width": "15%" },
             { data: 'phoneNumber', "width": "15%" },
