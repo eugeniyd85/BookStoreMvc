@@ -8,12 +8,12 @@ function loadDataTable() {
     dataTable = $('#tblData').DataTable({
         "ajax": { url: '/admin/user/getall' },
         "columns": [
-            //find exact place where these names of the properties are taken from
+            //find exact place where these names of the properties are taken from - taken from the model, but in model it starts from capital letter and here small letter - why?
             { data: 'name', "width": "15%" },
             { data: 'email', "width": "15%" },
             { data: 'phoneNumber', "width": "15%" },
             { data: 'company.name', "width": "15%" },
-            { data: '', "width": "15%" },
+            { data: 'role', "width": "15%" },
             {
                 data: 'id',
                 "render": function (data) {
