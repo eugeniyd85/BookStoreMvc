@@ -27,6 +27,35 @@ namespace BookStoreMvc.Areas.Admin.Controllers
             return View();
         }
 
+        public IActionResult RoleManagement(string? userId)
+        {
+            var userRoles = _db.UserRoles.ToList();
+            var roles = _db.Roles.ToList();
+
+            ApplicationUser user = _db.ApplicationUsers.Include(u => u.Company).FirstOrDefault(u => u.Id == userId);
+            //var roleId = userRoles.FirstOrDefault(u => u.UserId == user.Id).RoleId; //understand how .RoleId works
+            //user.Role = roles.FirstOrDefault(u => u.Id == roleId).Name;
+
+            UserVM UserVM = new ()
+            {
+                ApplicationUser = user,
+                UserRole = userRoles.FirstOrDefault(u => u.UserId == user.Id).RoleId, //understand how .RoleId works
+                RoleList = _db.Roles.Select(r => new SelectListItem
+                {
+                    Text = r.Name,
+                    Value = r.Id
+                }),
+                CompanyList = _db.Companies.Select(c => new SelectListItem
+                {
+                    Text = c.Name,
+                    Value = c.Id.ToString()
+                }),
+                UserCompany = user.Company == null ? "" : user.Company.Id.ToString()
+            };
+
+            return View(UserVM);
+        }
+
         #region API CALLS
 
         [HttpGet]

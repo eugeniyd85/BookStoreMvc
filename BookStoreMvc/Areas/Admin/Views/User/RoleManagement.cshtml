@@ -1,0 +1,62 @@
+﻿@model UserVM
+
+<div class="card shadow border-0 mt-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-4">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="py-2 text-white">Manage User Role</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <div class="row pt-3">
+            <div class="col-md-12">
+                <form id="manageUserForm" class="row" method="post">
+                    <input asp-for="ApplicationUser.Id" hidden />
+                    @* <h3 class="border-bottom pb-3 mb-4 text-secondary text-center">Create a new account</h3> *@
+                    @* <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div> *@
+                    <div class="form-floating mb-3 col-md-12">
+                        <input asp-for="ApplicationUser.Name" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                        <label asp-for="ApplicationUser.Name" class="ms-2 text-muted">User Name</label>
+                    </div>
+                    <div class="form-floating mb-3 col-md-6">
+                        <select asp-for="UserRole" asp-items="@Model.RoleList" class="form-select" id="UserRole">
+                            <option disabled>-- Select Role --</option>
+                        </select>
+                        <label asp-for="UserRole" class="ms-2 text-muted">Role</label>
+                    </div>
+                    <div class="form-floating mb-3 col-md-6">
+                        <select asp-for="UserCompany" asp-items="@Model.CompanyList" class="form-select" id="UserCompany">
+                            <option selected>--Select Company--</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            function toggleCompanyVisibility() {
+                var selection = $('#UserRole option:selected').text();
+                if (selection === 'Company') {
+                    $('#UserCompany').show();
+                } else {
+                    $('#UserCompany').hide();
+                }
+            }
+
+            // Run on page load
+            toggleCompanyVisibility();
+
+            // Also run when user changes the role
+            $('#UserRole').change(toggleCompanyVisibility);
+        });
+    </script>
+}
