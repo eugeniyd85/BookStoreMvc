@@ -5,9 +5,12 @@ using BookStoreMvc.Models.ViewModels;
 using BookStoreMvc.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace BookStoreMvc.Areas.Admin.Controllers
 {
@@ -50,10 +53,34 @@ namespace BookStoreMvc.Areas.Admin.Controllers
                     Text = c.Name,
                     Value = c.Id.ToString()
                 }),
-                UserCompany = user.Company == null ? "" : user.Company.Id.ToString()
+                UserCompany = user.Company?.Id
             };
 
             return View(UserVM);
+        }
+
+        [HttpPost]
+        public IActionResult RoleManagement(UserVM userVM)
+        {
+            ApplicationUser userFromDb = _db.ApplicationUsers.FirstOrDefault(u => u.Id == userVM.ApplicationUser.Id);
+            userFromDb.CompanyId = userVM.UserCompany;
+            _db.ApplicationUsers.Update(userFromDb);
+
+            //The UserRoles table is a join table for many-to-many between Users and Roles.
+            //EF Core tracks(UserId, RoleId) as a composite primary key.
+            //You can’t UPDATE part of a composite key — you must delete and reinsert.
+            var userRoleFromDb = _db.UserRoles.FirstOrDefault(u => u.UserId == userVM.ApplicationUser.Id);
+            _db.UserRoles.Remove(userRoleFromDb);
+            _db.SaveChanges();
+
+            _db.UserRoles.Add(new IdentityUserRole<string>
+            {
+                UserId = userVM.ApplicationUser.Id,
+                RoleId = userVM.UserRole
+            });
+            _db.SaveChanges();
+
+            return RedirectToAction(nameof(Index));
         }
 
         #region API CALLS

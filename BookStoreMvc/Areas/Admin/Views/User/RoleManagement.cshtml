@@ -30,8 +30,13 @@
                             <option selected>--Select Company--</option>
                         </select>
                     </div>
-                    <div class="col-12">
-                        <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+                    <div class="row pt-3">
+                        <div class="col-6 col-md-3">
+                            <button id="roleSubmit" type="submit" class="btn btn-primary form-control">Save</button>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a asp-controller="User" asp-action="Index" class="btn btn-outline-primary border form-control">Back</a>
+                        </div>
                     </div>
                 </form>
             </div>

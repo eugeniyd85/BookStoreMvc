@@ -15,6 +15,6 @@ namespace BookStoreMvc.Models.ViewModels
         public IEnumerable<SelectListItem> RoleList { get; set; }
         [ValidateNever]
         public IEnumerable<SelectListItem> CompanyList { get; set; }
-        public string UserCompany { get; set; }
+        public int? UserCompany { get; set; }
     }
 }
