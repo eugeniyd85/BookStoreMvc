@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace BookStoreMvc.Models.ViewModels
 {
-    public class UserVM
+    public class RoleManagementVM
     {
         public ApplicationUser ApplicationUser { get; set; }
-        public string UserRole { get; set; }
+        //public string UserRole { get; set; }
         public IEnumerable<SelectListItem> RoleList { get; set; }
         [ValidateNever]
         public IEnumerable<SelectListItem> CompanyList { get; set; }
-        public int? UserCompany { get; set; }
+        //public int? UserCompany { get; set; }
     }
 }

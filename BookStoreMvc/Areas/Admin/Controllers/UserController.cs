@@ -1,4 +1,5 @@
 ﻿using BookStoreMvc.DataAccess.Data;
+using BookStoreMvc.DataAccess.Repository;
 using BookStoreMvc.DataAccess.Repository.IRepository;
 using BookStoreMvc.Models;
 using BookStoreMvc.Models.ViewModels;
@@ -18,85 +19,96 @@ namespace BookStoreMvc.Areas.Admin.Controllers
     [Authorize(Roles = SD.Role_Admin)]
     public class UserController : Controller
     {
-        private readonly ApplicationDbContext _db;
-
-        public UserController(ApplicationDbContext db)
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IUnitOfWork _unitOfWork;
+        public UserController(UserManager<IdentityUser> userManager, IUnitOfWork unitOfWork, RoleManager<IdentityRole> roleManager)
         {
-            _db = db;
+            _unitOfWork = unitOfWork;
+            _roleManager = roleManager;
+            _userManager = userManager;
         }
-
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult RoleManagement(string? userId)
+        public IActionResult RoleManagement(string userId)
         {
-            var userRoles = _db.UserRoles.ToList();
-            var roles = _db.Roles.ToList();
 
-            ApplicationUser user = _db.ApplicationUsers.Include(u => u.Company).FirstOrDefault(u => u.Id == userId);
-            //var roleId = userRoles.FirstOrDefault(u => u.UserId == user.Id).RoleId; //understand how .RoleId works
-            //user.Role = roles.FirstOrDefault(u => u.Id == roleId).Name;
-
-            UserVM UserVM = new ()
+            RoleManagementVM RoleVM = new RoleManagementVM()
             {
-                ApplicationUser = user,
-                UserRole = userRoles.FirstOrDefault(u => u.UserId == user.Id).RoleId, //understand how .RoleId works
-                RoleList = _db.Roles.Select(r => new SelectListItem
+                ApplicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == userId, includeProperties: "Company"),
+                RoleList = _roleManager.Roles.Select(i => new SelectListItem
                 {
-                    Text = r.Name,
-                    Value = r.Id
+                    Text = i.Name,
+                    Value = i.Name
                 }),
-                CompanyList = _db.Companies.Select(c => new SelectListItem
+                CompanyList = _unitOfWork.Company.GetAll().Select(i => new SelectListItem
                 {
-                    Text = c.Name,
-                    Value = c.Id.ToString()
+                    Text = i.Name,
+                    Value = i.Id.ToString()
                 }),
-                UserCompany = user.Company?.Id
             };
 
-            return View(UserVM);
+            RoleVM.ApplicationUser.Role = _userManager.GetRolesAsync(_unitOfWork.ApplicationUser.Get(u => u.Id == userId))
+                    .GetAwaiter().GetResult().FirstOrDefault();
+            return View(RoleVM);
         }
 
         [HttpPost]
-        public IActionResult RoleManagement(UserVM userVM)
+        public IActionResult RoleManagement(RoleManagementVM roleManagmentVM)
         {
-            ApplicationUser userFromDb = _db.ApplicationUsers.FirstOrDefault(u => u.Id == userVM.ApplicationUser.Id);
-            userFromDb.CompanyId = userVM.UserCompany;
-            _db.ApplicationUsers.Update(userFromDb);
 
-            //The UserRoles table is a join table for many-to-many between Users and Roles.
-            //EF Core tracks(UserId, RoleId) as a composite primary key.
-            //You can’t UPDATE part of a composite key — you must delete and reinsert.
-            var userRoleFromDb = _db.UserRoles.FirstOrDefault(u => u.UserId == userVM.ApplicationUser.Id);
-            _db.UserRoles.Remove(userRoleFromDb);
-            _db.SaveChanges();
+            string oldRole = _userManager.GetRolesAsync(_unitOfWork.ApplicationUser.Get(u => u.Id == roleManagmentVM.ApplicationUser.Id))
+                    .GetAwaiter().GetResult().FirstOrDefault();
 
-            _db.UserRoles.Add(new IdentityUserRole<string>
+            ApplicationUser applicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == roleManagmentVM.ApplicationUser.Id);
+
+
+            if (!(roleManagmentVM.ApplicationUser.Role == oldRole))
             {
-                UserId = userVM.ApplicationUser.Id,
-                RoleId = userVM.UserRole
-            });
-            _db.SaveChanges();
+                //a role was updated
+                if (roleManagmentVM.ApplicationUser.Role == SD.Role_Company)
+                {
+                    applicationUser.CompanyId = roleManagmentVM.ApplicationUser.CompanyId;
+                }
+                if (oldRole == SD.Role_Company)
+                {
+                    applicationUser.CompanyId = null;
+                }
+                _unitOfWork.ApplicationUser.Update(applicationUser);
+                _unitOfWork.Save();
 
-            return RedirectToAction(nameof(Index));
+                _userManager.RemoveFromRoleAsync(applicationUser, oldRole).GetAwaiter().GetResult();
+                _userManager.AddToRoleAsync(applicationUser, roleManagmentVM.ApplicationUser.Role).GetAwaiter().GetResult();
+
+            }
+            else
+            {
+                if (oldRole == SD.Role_Company && applicationUser.CompanyId != roleManagmentVM.ApplicationUser.CompanyId)
+                {
+                    applicationUser.CompanyId = roleManagmentVM.ApplicationUser.CompanyId;
+                    _unitOfWork.ApplicationUser.Update(applicationUser);
+                    _unitOfWork.Save();
+                }
+            }
+
+            return RedirectToAction("Index");
         }
+
 
         #region API CALLS
 
         [HttpGet]
-        public IActionResult GetALl()
+        public IActionResult GetAll()
         {
-            List<ApplicationUser> objUsersList = _db.ApplicationUsers.Include(u=>u.Company).ToList();
-            
-            var userRoles = _db.UserRoles.ToList();
-            var roles = _db.Roles.ToList();
+            List<ApplicationUser> objUserList = _unitOfWork.ApplicationUser.GetAll(includeProperties: "Company").ToList();
 
-            foreach (var user in objUsersList)
+            foreach (var user in objUserList)
             {
-                var roleId = userRoles.FirstOrDefault(u => u.UserId == user.Id).RoleId;
-                user.Role = roles.FirstOrDefault(u => u.Id == roleId).Name;
+
+                user.Role = _userManager.GetRolesAsync(user).GetAwaiter().GetResult().FirstOrDefault();
 
                 if (user.Company == null)
                 {
@@ -107,31 +119,32 @@ namespace BookStoreMvc.Areas.Admin.Controllers
                 }
             }
 
-            return Json(new { data = objUsersList });
+            return Json(new { data = objUserList });
         }
 
+
         [HttpPost]
-        //what is FromBody?
-        public IActionResult LockUnlock([FromBody]string id)
+        public IActionResult LockUnlock([FromBody] string id)
         {
-            var objFromDb = _db.ApplicationUsers.FirstOrDefault(u => u.Id == id);
+
+            var objFromDb = _unitOfWork.ApplicationUser.Get(u => u.Id == id);
             if (objFromDb == null)
             {
-                return Json(new { success = false, message = "Error while locking/unlocking" });
+                return Json(new { success = false, message = "Error while Locking/Unlocking" });
             }
-            else {
-                if (objFromDb.LockoutEnd != null && objFromDb.LockoutEnd > DateTime.Now)
-                {
-                    //user is currently locked, we will unlock them
-                    objFromDb.LockoutEnd = DateTime.Now;
-                }
-                else
-                {
-                    objFromDb.LockoutEnd = DateTime.Now.AddYears(100);
-                }
-                _db.SaveChanges();
-                return Json(new { success = true, message = "Operation successful" });
+
+            if (objFromDb.LockoutEnd != null && objFromDb.LockoutEnd > DateTime.Now)
+            {
+                //user is currently locked and we need to unlock them
+                objFromDb.LockoutEnd = DateTime.Now;
             }
+            else
+            {
+                objFromDb.LockoutEnd = DateTime.Now.AddYears(1000);
+            }
+            _unitOfWork.ApplicationUser.Update(objFromDb);
+            _unitOfWork.Save();
+            return Json(new { success = true, message = "Operation Successful" });
         }
 
         #endregion
