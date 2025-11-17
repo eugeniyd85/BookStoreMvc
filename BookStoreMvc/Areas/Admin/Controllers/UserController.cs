@@ -51,6 +51,7 @@ namespace BookStoreMvc.Areas.Admin.Controllers
                 }),
             };
 
+            //reaad about GetRolesAsync and GetAwaiter().GetResult()
             RoleVM.ApplicationUser.Role = _userManager.GetRolesAsync(_unitOfWork.ApplicationUser.Get(u => u.Id == userId))
                     .GetAwaiter().GetResult().FirstOrDefault();
             return View(RoleVM);
@@ -108,6 +109,7 @@ namespace BookStoreMvc.Areas.Admin.Controllers
             foreach (var user in objUserList)
             {
 
+                //understand what is _userManager
                 user.Role = _userManager.GetRolesAsync(user).GetAwaiter().GetResult().FirstOrDefault();
 
                 if (user.Company == null)
