@@ -116,7 +116,7 @@ dotnet ef database update --project BookStoreMvc.DataAccess --startup-project Bo
 
 - Known bugs: an empty cart can still go to payment; quantity can be set to a negative number; some optional order fields are not shown after a page reload when cleared; the cart counter can be stale after login until the Home page is opened.
 - `EmailSender` is a stub: no emails are sent (SendGrid integration is not implemented).
-- Facebook login credentials should be added to user secrets or environment variables.
+- Facebook external login is disabled (the registration code is commented out in Program.cs); it can be re-enabled with keys stored in user secrets or environment variables.
 - Migration errors in `DbInitializer` are swallowed silently; they should be logged.
 - Add unit and integration tests.
 - Add a `docker-compose` file (app + SQL Server) for a one-command setup.
