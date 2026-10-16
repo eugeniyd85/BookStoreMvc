@@ -69,7 +69,7 @@ On startup the app applies pending EF Core migrations and, on the first run, cre
 
 | Key | Purpose |
 |---|---|
-| `ConnectionStrings:DefaultConnection` | SQL Server connection string, e.g. `Server=(localdb)\\MSSQLLocalDB;Database=BookStoreDb;Trusted_Connection=True;TrustServerCertificate=True` |
+| `ConnectionStrings:DefaultConnection` | SQL Server connection string, e.g. `Server=localhost;Database=BookStoreDb;Trusted_Connection=True;TrustServerCertificate=True` |
 | `Stripe:SecretKey` | Stripe secret key (use a **test** key, `sk_test_...`) |
 | `Stripe:PublishableKey` | Stripe publishable key (`pk_test_...`) |
 
@@ -116,7 +116,7 @@ dotnet ef database update --project BookStoreMvc.DataAccess --startup-project Bo
 
 - Known bugs: an empty cart can still go to payment; quantity can be set to a negative number; some optional order fields are not shown after a page reload when cleared; the cart counter can be stale after login until the Home page is opened.
 - `EmailSender` is a stub: no emails are sent (SendGrid integration is not implemented).
-- Facebook login credentials should be moved from code to user secrets or environment variables.
+- Facebook login credentials should be added to user secrets or environment variables.
 - Migration errors in `DbInitializer` are swallowed silently; they should be logged.
 - Add unit and integration tests.
 - Add a `docker-compose` file (app + SQL Server) for a one-command setup.
